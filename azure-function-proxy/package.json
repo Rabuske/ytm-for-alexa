@@ -1,0 +1,13 @@
+{
+  "name": "azure-function",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "start": "func start",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "ytdl-core": "^4.11.2"
+  },
+  "devDependencies": {}
+}

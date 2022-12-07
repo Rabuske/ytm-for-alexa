@@ -1,0 +1,113 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "me ouve",
+      "intents": [
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.PauseIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.ResumeIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.LoopOnIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.LoopOffIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.PreviousIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NextIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StartOverIntent",
+          "samples": []
+        },
+        {
+          "name": "TocarMusica",
+          "slots": [
+            {
+              "name": "musicName",
+              "type": "AMAZON.MusicRecording"
+            },
+            {
+              "name": "artistName",
+              "type": "AMAZON.Artist"
+            },
+            {
+              "name": "albumName",
+              "type": "AMAZON.MusicAlbum"
+            },
+            {
+              "name": "groupName",
+              "type": "AMAZON.MusicGroup"
+            },
+            {
+              "name": "playlistName",
+              "type": "AMAZON.SearchQuery"
+            }
+          ],
+          "samples": [
+            "banda {groupName}",
+            "artista {artistName}",
+            "artista {groupName}",
+            "artist {groupName}",
+            "toca músicas de {playlistName}",
+            "tocar músicas de {playlistName}",
+            "toca a playlist {playlistName}",
+            "toca o álbum {albumName} da {artistName}",
+            "toca o álbum {albumName} do {artistName}",
+            "disco {albumName} ",
+            "álbum {albumName} do {groupName}",
+            "álbum {albumName} do {artistName}",
+            "tocar radio {playlistName}",
+            "tocar playlist {playlistName}",
+            "toca playlist {groupName}",
+            "toca playlist {musicName} ",
+            "toca {musicName} do {groupName}",
+            "tocar {musicName} do {groupName}",
+            "toca {groupName}",
+            "toca a música {musicName} do {groupName}",
+            "toca a música {musicName} do {artistName}",
+            "tocar {musicName} do {artistName}",
+            "toca {musicName} do {albumName}",
+            "toca o album {albumName}",
+            "toca música {musicName}",
+            "toca {musicName}",
+            "tocar música {musicName}",
+            "tocar album {albumName}",
+            "tocar {musicName} artista {artistName}",
+            "tocar {artistName}",
+            "tocar {musicName}"
+          ]
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        }
+      ],
+      "types": []
+    }
+  },
+  "version": "18"
+}
