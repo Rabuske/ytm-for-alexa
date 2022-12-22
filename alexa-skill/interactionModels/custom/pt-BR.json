@@ -44,7 +44,7 @@
           "samples": []
         },
         {
-          "name": "TocarMusica",
+          "name": "PlaySong",
           "slots": [
             {
               "name": "musicName",
@@ -65,9 +65,23 @@
             {
               "name": "playlistName",
               "type": "AMAZON.SearchQuery"
+            },
+            {
+              "name": "randomMode",
+              "type": "randomMode"
             }
           ],
           "samples": [
+            "álbum {albumName} do {artistName} em ordem {randomMode}",
+            "álbum {albumName} do {artistName} em modo {randomMode}",
+            "álbum {albumName} do {groupName} em modo {randomMode}",
+            "toca {groupName} em modo {randomMode}",
+            "tocar {artistName} em modo {randomMode}",
+            "disco {albumName} em modo {randomMode}",
+            "toca o álbum {albumName} do {artistName} em modo {randomMode}",
+            "toca o álbum {albumName} da {artistName} em modo {randomMode}",
+            "artista {artistName} em modo {randomMode}",
+            "banda {groupName} em modo {randomMode}",
             "banda {groupName}",
             "artista {artistName}",
             "artista {groupName}",
@@ -104,10 +118,58 @@
         {
           "name": "AMAZON.NavigateHomeIntent",
           "samples": []
+        },
+        {
+          "name": "MyRadio",
+          "slots": [],
+          "samples": [
+            "toca minha rádio",
+            "tocar minha rádio"
+          ]
+        },
+        {
+          "name": "MyRadioRock",
+          "slots": [],
+          "samples": [
+            "toca minha rádio de rock",
+            "tocar minha rádio de rock"
+          ]
+        },
+        {
+          "name": "MyPlaylist",
+          "slots": [],
+          "samples": [
+            "tocar minha playlist",
+            "toca minha playlist"
+          ]
+        },
+        {
+          "name": "MyPlaylistRock",
+          "slots": [],
+          "samples": [
+            "tocar minha playlist de rock",
+            "toca minha playlist de rock"
+          ]
         }
       ],
-      "types": []
+      "types": [
+        {
+          "values": [
+            {
+              "name": {
+                "value": "aleatória"
+              }
+            },
+            {
+              "name": {
+                "value": "aleatório"
+              }
+            }
+          ],
+          "name": "randomMode"
+        }
+      ]
     }
   },
-  "version": "18"
+  "version": "20"
 }

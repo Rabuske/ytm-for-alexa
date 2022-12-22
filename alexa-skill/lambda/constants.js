@@ -1,4 +1,5 @@
 exports.config = {
   pageSize: 20,
-  proxyURL: "<include your own url>"
+  videoInfoURL: "https://ytmusic-proxy-for-alexa.azurewebsites.net/api/ytmusic",
+  videoSearchURL: "https://ytmusic-proxy-for-alexa.azurewebsites.net/api/search-api"
 };

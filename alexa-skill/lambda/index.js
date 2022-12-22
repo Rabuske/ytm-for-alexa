@@ -9,11 +9,6 @@ const welcomePhrases = [
   "Fale!",
   "Fale!",
   "Fale!",
-  "Fale...",
-  "Fale?",
-  "Fale",
-  "Fale!",
-  "Fale!",
   "Fala Pandorinha.",
   "Fala Lúcifer.",
   "Fala mané.",
@@ -217,12 +212,18 @@ const PlayMusicIntentHandler = {
     return (
       Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
       (Alexa.getIntentName(handlerInput.requestEnvelope) === "TocarMusica" ||
-       Alexa.getIntentName(handlerInput.requestEnvelope) === "PlayMusic"
+       Alexa.getIntentName(handlerInput.requestEnvelope) === "PlaySong"
       )
     );
   },
   handle(handlerInput) {
     console.log("StartPlaybackHandler");
+    
+    let randomMode = false;
+    if(handlerInput.requestEnvelope.request.intent.slots.randomMode.value)
+    {
+        randomMode = true;
+    }
     
     const searchTerms = {
       artistName:
@@ -234,7 +235,9 @@ const PlayMusicIntentHandler = {
       albumName:
         handlerInput.requestEnvelope.request.intent.slots.albumName.value,
       playlistName:
-        handlerInput.requestEnvelope.request.intent.slots.playlistName.value,        
+        handlerInput.requestEnvelope.request.intent.slots.playlistName.value,   
+      randomMode:
+        randomMode,
     }
     
     searchTerms.query = `${searchTerms.playlistName || ""} ${searchTerms.musicName || ""} ${searchTerms.albumName || ""} ${searchTerms.groupName || ""} ${searchTerms.artistName || ""}`.trim();
@@ -250,6 +253,62 @@ const PlayMusicIntentHandler = {
   },
 };
 
+const MyRadioIntentHandler = {
+  async canHandle(handlerInput) {
+    return (
+      Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyRadio"
+      )
+    );
+  },
+  handle(handlerInput) {
+      console.log("MyRadioIntentHandler");
+      return controller.playPlaylist(handlerInput, "RDAMPLPLaEfP183lgZ1PcXSHu4bskUyM8fmLaw54");
+  },
+};
+
+const MyRadioRockIntentHandler = {
+  async canHandle(handlerInput) {
+    return (
+      Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyRadioRock"
+      )
+    );
+  },
+  handle(handlerInput) {
+      console.log("MyRadioRockIntentHandler");
+      return controller.playPlaylist(handlerInput, "RDAMPLPLaEfP183lgZ0sz4htGL1y6LkXNSw7T0ri");
+  },
+};
+
+const MyPlaylistIntentHandler = {
+  async canHandle(handlerInput) {
+    return (
+      Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyPlaylist"
+      )
+    );
+  },
+  handle(handlerInput) {
+      console.log("MyPlaylistIntentHandler");
+      return controller.playPlaylist(handlerInput, "PLaEfP183lgZ1PcXSHu4bskUyM8fmLaw54");
+  },
+};
+
+const MyPlaylistRockIntentHandler = {
+  async canHandle(handlerInput) {
+    return (
+      Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
+      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyPlaylistRock"
+      )
+    );
+  },
+  handle(handlerInput) {
+      console.log("MyPlaylistRockIntentHandler");
+      return controller.playPlaylist(handlerInput, "PLaEfP183lgZ0sz4htGL1y6LkXNSw7T0ri");
+  },
+};
+
 const controller = {
   async search(handlerInput, searchTerms) {
     console.log("Search");
@@ -257,6 +316,25 @@ const controller = {
     const playbackInfo = await getPlaybackInfo(handlerInput);
     const data = await searchForVideos(searchTerms);
     playbackInfo.videoIds = data.videoIds;
+    if(searchTerms.randomMode)
+    {
+        shuffleArray(playbackInfo.videoIds, false);
+    }else if(searchTerms.musicName)
+    {
+        shuffleArray(playbackInfo.videoIds, true);
+    }
+    playbackInfo.currentVideoIndex = 0;
+    playbackInfo.offsetInMilliseconds = 0;
+    return this.play(handlerInput, "Tocando ");
+  },
+  async playPlaylist(handlerInput, playlistId)
+  {
+    console.log("playPlaylist");
+    console.log(playlistId);
+    const playbackInfo = await getPlaybackInfo(handlerInput);
+    const data = await getPlaylist(playlistId);
+    playbackInfo.videoIds = data.videoIds;
+    shuffleArray(playbackInfo.videoIds);
     playbackInfo.currentVideoIndex = 0;
     playbackInfo.offsetInMilliseconds = 0;
     return this.play(handlerInput, "Tocando ");
@@ -266,7 +344,12 @@ const controller = {
     const playbackInfo = await getPlaybackInfo(handlerInput);
     const { videoIds, offsetInMilliseconds, currentVideoIndex } = playbackInfo;
     const videoId = videoIds[currentVideoIndex];
-    const audioFormat = await getAudioInformation(videoId);
+    let audioFormat;
+    try{
+        audioFormat = await getAudioInformation(videoId);
+    } catch(err){
+        return controller.playNext(handlerInput);
+    }
     handlerInput.responseBuilder
       .withShouldEndSession(true)
       .addAudioPlayerPlayDirective(
@@ -274,7 +357,7 @@ const controller = {
         audioFormat.url,
         videoId,
         offsetInMilliseconds
-      );
+    );
     if (message) {
       handlerInput.responseBuilder.speak(
         `${message} ${audioFormat.title}`
@@ -325,17 +408,26 @@ const controller = {
 };
 
 const searchForVideos = async (searchTerms) => {
-  let data;
-  if(searchTerms.albumName){
-    data = await youtubeAPI.searchForAlbum(searchTerms.query);
-  } else if(searchTerms.playlistName){
-    data = await youtubeAPI.searchForPlaylist(searchTerms.query);
-  } else if(searchTerms.musicName){
-    data = await youtubeAPI.searchForMusic(searchTerms.query);
-  } else {
-    data = await youtubeAPI.searchForArtist(searchTerms.query);
-  }  
-  return data;  
+    const response = await axios({
+        method: 'get',
+        url: constants.config.videoSearchURL,
+        params: {
+            query: searchTerms.query,
+        },
+        data: searchTerms,
+      });
+    return response.data;
+};
+
+const getPlaylist = async (playlistId) => {
+    const response = await axios({
+        method: 'get',
+        url: constants.config.videoSearchURL,
+        params: {
+            playlistId: playlistId,
+        },
+      });
+    return response.data;
 };
 
 const getAudioInformation = async (videoId) => {
@@ -343,7 +435,7 @@ const getAudioInformation = async (videoId) => {
     try{
         const response = await axios({
             method: 'get',
-            url: constants.config.proxyURL,
+            url: constants.config.videoInfoURL,
             params: {
                 videoId: videoId,
             },
@@ -370,6 +462,7 @@ const fetchNextVideos = async (handlerInput) => {
   // build playlist based on last played song
   const lastVideoId = playbackInfo.videoIds[playbackInfo.videoIds.length - 1];
   const nextVideos = await searchForVideos({playlistName: lastVideoId, query: lastVideoId});
+  shuffleArray(nextVideos.videoIds);
   playbackInfo.videoIds = playbackInfo.videoIds.concat(nextVideos.videoIds);
   playbackInfo.videoIds = playbackInfo.videoIds.filter(onlyUnique);
 };
@@ -388,6 +481,7 @@ const AudioPlayerEventHandler = {
       case "PlaybackStarted":
         playbackInfo.token = handlerInput.requestEnvelope.request.token;
         playbackInfo.isCurrentlyPlaying = true;
+        playbackInfo.hasNextSongQueued = false;
         break;
       case "PlaybackFinished":
         playbackInfo.isCurrentlyPlaying = false;
@@ -399,6 +493,9 @@ const AudioPlayerEventHandler = {
           await queueNextVideo(handlerInput);
         } else {
           playbackInfo.currentVideoIndex = playbackInfo.currentVideoIndex + 1;
+        }
+        if(!playbackInfo.hasNextSongQueued){
+            controller.play(handlerInput);
         }
         break;
       case "PlaybackStopped":
@@ -460,9 +557,10 @@ const queueNextVideo = async (handlerInput) => {
             expectedPreviousToken
           );                  
           canPlay = true;
-      } catch(err)
-      {
+          playbackInfo.hasNextSongQueued = true;
+      } catch(err){
           retries++;
+          playbackInfo.currentVideoIndex = playbackInfo.currentVideoIndex === playbackInfo.videoIds.length - 1? 0 : playbackInfo.currentVideoIndex + 1;
       }
   }
 }
@@ -482,6 +580,7 @@ const LoadPersistentAttributesRequestInterceptor = {
           isCurrentlyPlaying: false,
           isLoopingSongs: false,
           token: "",
+          hasNextSongQueued: false,
         },
       });
     }
@@ -494,6 +593,19 @@ const SavePersistentAttributesResponseInterceptor = {
   },
 };
 
+/* Randomize array in-place using Durstenfeld shuffle algorithm */
+function shuffleArray(array, skipFirst) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        if(skipFirst && j === 0) {
+            continue;
+        }
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+}
+
 exports.handler = Alexa.SkillBuilders.custom()
   .addRequestHandlers(
     LaunchRequestHandler,
@@ -505,6 +617,10 @@ exports.handler = Alexa.SkillBuilders.custom()
     NextPlaybackIntentHandler,
     PreviousPlaybackIntentHandler,
     ResumePlaybackIntentHandler,
+    MyRadioRockIntentHandler,
+    MyRadioIntentHandler,
+    MyPlaylistRockIntentHandler,
+    MyPlaylistIntentHandler,
     PlayMusicIntentHandler,
     SessionEndedRequestHandler,
     FallbackIntentHandler,

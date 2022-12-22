@@ -1,4 +1,4 @@
-const YTMusic = require('./ytmusicapi/dist').default; // Local copy made to support Node 12
+const YTMusic = require('./ytmusicapi/own').default; // Local copy made to support Node 12
 const ytDownload = require("ytdl-core");
 const youtubeMusic = new YTMusic();
 
@@ -42,7 +42,7 @@ const searchForAlbum = async (query) => {
 
 const searchForPlaylist = async(query) => {
   const searchResults = await youtubeMusic.search(query);  
-  const playlistResult = searchResults.find(result => result.resultType === "playlist");
+  const playlistResult = searchResults.find(result => result.resultType === "album");
   if(!playlistResult)
   {
     return defaultSearch(searchResults);
@@ -98,7 +98,7 @@ const processArtistResult = async (result) => {
 }
 
 const processPlaylistResult = async (result) => {
-  const playlist = await getPlaylist(result.browseId);
+  const playlist = await getPlaylist(result.browseId, 400);
   return playlist;
 }
 
@@ -123,10 +123,12 @@ const defaultSearch = async(searchResults) => {
 }
 
 const getPlaylist = async(playlistId) => {
-  const playlist = await youtubeMusic.getPlaylist(playlistId);
+  const playlist = await youtubeMusic.getPlaylist(playlistId, 400);
+  console.log(playlist);
   return ({
     title: playlist.title,
-    videoIds: playlist.tracks.map(track => track.videoId),
+    videoIds: playlist.tracks.map(track => track.videoId).filter(track => track !== null && track !== "null"),
+    token: playlist.suggestions_token,
   });
 }
 
