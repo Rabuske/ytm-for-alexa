@@ -1,7 +1,6 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "me ouve",
       "intents": [
         {
           "name": "AMAZON.CancelIntent",
@@ -44,7 +43,6 @@
           "samples": []
         },
         {
-          "name": "PlaySong",
           "slots": [
             {
               "name": "musicName",
@@ -71,6 +69,7 @@
               "type": "randomMode"
             }
           ],
+          "name": "PlaySong",
           "samples": [
             "álbum {albumName} do {artistName} em ordem {randomMode}",
             "álbum {albumName} do {artistName} em modo {randomMode}",
@@ -120,32 +119,32 @@
           "samples": []
         },
         {
-          "name": "MyRadio",
           "slots": [],
+          "name": "MyRadio",
           "samples": [
             "toca minha rádio",
             "tocar minha rádio"
           ]
         },
         {
-          "name": "MyRadioRock",
           "slots": [],
+          "name": "MyRadioRock",
           "samples": [
             "toca minha rádio de rock",
             "tocar minha rádio de rock"
           ]
         },
         {
-          "name": "MyPlaylist",
           "slots": [],
+          "name": "MyPlaylist",
           "samples": [
             "tocar minha playlist",
             "toca minha playlist"
           ]
         },
         {
-          "name": "MyPlaylistRock",
           "slots": [],
+          "name": "MyPlaylistRock",
           "samples": [
             "tocar minha playlist de rock",
             "toca minha playlist de rock"
@@ -168,8 +167,8 @@
           ],
           "name": "randomMode"
         }
-      ]
+      ],
+      "invocationName": "me ouve"
     }
-  },
-  "version": "20"
+  }
 }

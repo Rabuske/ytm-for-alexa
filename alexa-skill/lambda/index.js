@@ -2,7 +2,6 @@ const Alexa = require("ask-sdk-core");
 const AWS = require("aws-sdk");
 const Adapter = require("ask-sdk-dynamodb-persistence-adapter");
 const constants = require("./constants");
-const youtubeAPI = require("./youtube-music-api");
 const axios = require("axios");
 
 const welcomePhrases = [

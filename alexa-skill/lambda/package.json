@@ -15,8 +15,6 @@
     "aws-sdk": "^2.326.0",
     "axios": "0.26.0",
     "dotenv": "^16.0.3",
-    "ytdl-core": "^4.11.2",
-    "@codyduong/nav": "^0.2.0",
     "case-insensitive-object": "^0.1.4",
     "i18next": "^21.6.13",
     "prompt-sync": "^4.2.0",
