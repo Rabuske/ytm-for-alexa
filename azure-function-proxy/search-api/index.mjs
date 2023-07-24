@@ -1,6 +1,12 @@
-const youtubeAPI = require("./youtube-music-api");
+import {
+  searchForAlbum,
+  searchForArtist,
+  searchForMusic,
+  searchForPlaylist,
+  getPlaylist,
+} from "./youtube-music-api.js"
 
-module.exports = async function (context, req) {
+async function handler (context, req) {
   if (
     !req.query.query &&
     (!req.body || !req.body.query) &&
@@ -17,7 +23,7 @@ module.exports = async function (context, req) {
 
   if (playlistId) {
     try {
-      const data = await youtubeAPI.getPlaylist(playlistId);
+      const data = await getPlaylist(playlistId);
       context.res = { body: data };
       return;
     } catch (err) {
@@ -34,13 +40,13 @@ module.exports = async function (context, req) {
   let data;
   try {
     if (albumName) {
-      data = await youtubeAPI.searchForAlbum(query);
+      data = await searchForAlbum(query);
     } else if (playlistName) {
-      data = await youtubeAPI.searchForPlaylist(query);
+      data = await searchForPlaylist(query);
     } else if (musicName) {
-      data = await youtubeAPI.searchForMusic(query);
+      data = await searchForMusic(query);
     } else {
-      data = await youtubeAPI.searchForArtist(query);
+      data = await searchForArtist(query);
     }
   } catch (err) {
     context.res = { body: err, status: 500 };
@@ -49,3 +55,5 @@ module.exports = async function (context, req) {
 
   context.res = { body: data };
 };
+
+export default handler

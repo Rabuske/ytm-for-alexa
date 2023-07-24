@@ -1,6 +1,6 @@
-const ytdl = require("ytdl-core");
+import ytdl from "ytdl-core";
 
-module.exports = async function (context, req) {    
+async function handler (context, req) {    
     if(!req.query.videoId)
     {
         console.log(JSON.stringify(req));
@@ -20,3 +20,5 @@ module.exports = async function (context, req) {
         Object.assign(context.res.body, {title: audioInfo.player_response.videoDetails.title});
     }
 };
+
+export default handler
