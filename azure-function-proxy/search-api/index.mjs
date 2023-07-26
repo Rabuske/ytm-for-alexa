@@ -23,7 +23,7 @@ async function handler (context, req) {
 
   if (playlistId) {
     try {
-      const data = await getPlaylist(playlistId);
+      const data = await getPlaylist(playlistId, "Playlist pré-definida");
       context.res = { body: data };
       return;
     } catch (err) {
