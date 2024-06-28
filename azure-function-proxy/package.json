@@ -7,7 +7,8 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
+    "@steffenkabus/node-youtube-music": "^0.11.2",
     "ytdl-core": "^4.11.2"
   },
-  "devDependencies": {}
+  "type": "module"
 }

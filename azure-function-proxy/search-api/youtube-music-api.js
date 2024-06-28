@@ -1,138 +1,103 @@
-const YTMusic = require('./ytmusicapi/own').default; // Local copy made to support Node 12
-const ytDownload = require("ytdl-core");
-const youtubeMusic = new YTMusic();
+import {
+  searchMusics,
+  searchAlbums,
+  searchPlaylists,
+  getSuggestions,
+  listMusicsFromAlbum,
+  listMusicsFromPlaylist,
+  searchArtists,
+  getArtist,
+} from 'node-youtube-music';
 
-function onlyUnique(value, index, self) {
-  return self.indexOf(value) === index;
-}
-
-const searchForMusic = async (query) => {
-  const searchResults = await youtubeMusic.search(query);  
-  const musicResult = searchResults.find(result => result.resultType === "song");
-  if(!musicResult)
+const searchForMusic = async (query, options) => {
+  const musics = await searchMusics(query);
+  const suggestions = await getSuggestions(musics[0].youtubeId);
+  
+  if(options?.fullResults)
   {
-    return defaultSearch(searchResults);
-  }  
-  const result = await processMusicResult(musicResult);
-  return result;
-}
-
-const searchForArtist = async (query) => {
-  const searchResults = await youtubeMusic.search(query);  
-  const artistResult = searchResults.find(result => result.resultType === "artist");
-  if(!artistResult)
-  {
-    return defaultSearch(searchResults);
+    return ({
+      musics: musics,
+      suggestions: suggestions
+    });
   }
 
-  const result = await processArtistResult(artistResult);
-  return result;
-}
-
-const searchForAlbum = async (query) => {
-  const searchResults = await youtubeMusic.search(query);  
-  const albumResult = searchResults.find(result => result.resultType === "album");
-  if(!albumResult)
-  {
-    return defaultSearch(searchResults);
-  }
-  const result = await processAlbumResult(albumResult);
-  return result;
-}
-
-const searchForPlaylist = async(query) => {
-  const searchResults = await youtubeMusic.search(query);  
-  const playlistResult = searchResults.find(result => result.resultType === "album");
-  if(!playlistResult)
-  {
-    return defaultSearch(searchResults);
-  }
-  const result = await processPlaylistResult(result);
-  return result;
-}
-
-const processMusicResult = async (result) => {
-  const songInfo = await ytDownload.getInfo(result.videoId);
-  if(!songInfo)
-  {
-    throw "Foi mal, não consigui encontrar a música solicitada."
-  }
-
-  let finalList = {
-    title: result.title,
-    videoIds: [result.videoId],
-  }
-
-  const artist = await youtubeMusic.getArtist(songInfo.videoDetails.channelId);
-  if(!artist)
-  {
-    return finalList;
-  }
-  const playlist = await getPlaylist(artist.songs.browseId);
-  finalList.title = artist.name + " " + finalList.title;
-  finalList.videoIds = finalList.videoIds.concat(playlist.videoIds);
-  finalList.videoIds = finalList.videoIds.filter(onlyUnique);
-  return finalList;
-}
-
-const processAlbumResult = async (result) => {
-  const albumInfo = await youtubeMusic.getAlbum(result.browseId);   
-  if(!albumInfo)
-  {
-    throw `Não encontrei resultados para o álbum solicitado`;
-  }
   return ({
-    title: albumInfo.title,
-    videoIds: albumInfo.tracks.map(track => track.videoId),
-  });  
-}
-
-const processArtistResult = async (result) => {
-  const artist = await youtubeMusic.getArtist(result.browseId);
-
-  const playlist = await getPlaylist(artist.songs.browseId);
-  return ({
-    title: result.name,
-    videoIds: playlist.videoIds,
+    title: suggestions[0].title,
+    videoIds: suggestions.map(video => video.youtubeId),
   });
 }
 
-const processPlaylistResult = async (result) => {
-  const playlist = await getPlaylist(result.browseId, 400);
-  return playlist;
-}
-
-const defaultSearch = async(searchResults) => {
-  const mostRelevant = searchResults[0];
-  let result;
-  switch (mostRelevant.resultType) {
-    case "song":
-      result = await processMusicResult(mostRelevant);
-      break;
-    case "album":
-      result = await processAlbumResult(mostRelevant);
-      break;
-    case "artist":
-      result = await processArtistResult(mostRelevant);
-      break;
-    case "playlist":
-      result = await processPlaylistResult(mostRelevant);
-    default:
-      throw "Não consegui encontrar nenhum resultado válido";
+const searchForArtist = async (query, options) => {
+  const artists = await searchArtists(query);
+  if(artists.length == 0)
+  {
+    return await searchForMusic(query, options);
   }
+  const artist = await getArtist(artists[0].artistId)
+  const musics = await listMusicsFromPlaylist(artist.songsPlaylistId)
+
+  if(options?.fullResults)
+  {
+    return ({
+      artist: artist,
+      musics: musics
+    });
+  }
+
+  return ({
+    title: artist.name,
+    videoIds: musics.map(video => video.youtubeId)
+  })
 }
 
-const getPlaylist = async(playlistId) => {
-  const playlist = await youtubeMusic.getPlaylist(playlistId, 400);
-  console.log(playlist);
+const searchForAlbum = async (query, options) => {
+  const albums = await searchAlbums(query);
+  if(albums.length == 0)
+  {
+    return await searchForMusic(query, options);
+  }
+  const musics = await listMusicsFromAlbum(albums[0].albumId);
+
+  if(options?.fullResults)
+  {
+    return ({
+      albums: albums,
+      musics: musics,
+    })
+  }
+
   return ({
-    title: playlist.title,
-    videoIds: playlist.tracks.map(track => track.videoId).filter(track => track !== null && track !== "null"),
-    token: playlist.suggestions_token,
+    title: albums[0].title,
+    videoIds: musics.map(video => video.youtubeId)
   });
 }
 
-module.exports = {
+const searchForPlaylist = async(query, options) => {
+  const playlists = await searchPlaylists(query, { onlyOfficialPlaylists: false});  
+  if(playlists == 0)
+  {
+    return await searchForMusic(query, options);
+  }
+  const mostSongs = playlists.sort((p1, p2) => p2.totalSongs - p1.totalSongs)
+  return await getPlaylist(mostSongs[0].playlistId, mostSongs[0].title, options)
+}
+
+const getPlaylist = async(playlistId, playlistTitle, options) => {
+  const musics = await listMusicsFromPlaylist(playlistId)
+  if(options?.fullResults)
+  {
+    return ({
+      title: playlistTitle,
+      musics: musics,
+    });  
+  }
+  return ({
+    title: playlistTitle,
+    videoIds: musics.map(video => video.youtubeId)
+  });
+}
+
+export {
   searchForAlbum,
   searchForArtist,
   searchForMusic,

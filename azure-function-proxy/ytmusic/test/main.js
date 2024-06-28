@@ -1,7 +1,5 @@
 const funcToTest = require("../index");
 
-
-
 async function mainTest(){
   let context = {};
   const req = {

@@ -1,11 +1,18 @@
-const youtubeAPI = require("./youtube-music-api");
+import {
+  searchForAlbum,
+  searchForArtist,
+  searchForMusic,
+  searchForPlaylist,
+  getPlaylist
+} from "./youtube-music-api.js";
 
-module.exports = async function (context, req) {
-  if (
-    !req.query.query &&
-    (!req.body || !req.body.query) &&
-    !req.query.playlistId
-  ) {
+async function search(context, req) {
+  context.res = { body: req, status: 500 };
+
+  const searchTerm = req.query.query || (req.body? req.body.query : null);
+  const playlistId = req.query.playlistId;
+  
+  if (!searchTerm && !playlistId) {
     context.res = {
       status: 400 /* Defaults to 200 */,
       body: "Missing query or playlistId",
@@ -13,11 +20,12 @@ module.exports = async function (context, req) {
     return;
   }
 
-  const playlistId = req.query.playlistId;
+  const options = { fullResults: req.body && req.body.fullResults };
 
+  // Start by playing an specific playlist
   if (playlistId) {
     try {
-      const data = await youtubeAPI.getPlaylist(playlistId);
+      const data = await getPlaylist(playlistId, options);
       context.res = { body: data };
       return;
     } catch (err) {
@@ -26,22 +34,40 @@ module.exports = async function (context, req) {
     }
   }
 
-  const query = req.query.query || req.body.query;
-  const musicName = req.body && req.body.musicName;
-  const playlistName = req.body && req.body.playlistName;
-  const albumName = req.body && req.body.albumName;
+  // Parse all possible parameters sent in the body
+  const isArtist = req.body && req.body.artistName;
+  const isMusic = req.body && req.body.musicName;
+  const isPlaylist = req.body && req.body.playlistName;
+  const isAlbum = req.body && req.body.albumName;  
+  const searchType = req.body ? req.body.searchType || 'ALL' : 'ALL';
 
+  // If searchType is provided, only that type of result is returned
   let data;
   try {
-    if (albumName) {
-      data = await youtubeAPI.searchForAlbum(query);
-    } else if (playlistName) {
-      data = await youtubeAPI.searchForPlaylist(query);
-    } else if (musicName) {
-      data = await youtubeAPI.searchForMusic(query);
-    } else {
-      data = await youtubeAPI.searchForArtist(query);
-    }
+    switch (searchType) {
+      case 'ALBUMS':
+        data = await searchForAlbum(searchTerm, options);
+        break;
+      case 'ARTISTS':
+        data = await searchForArtist(searchTerm, options);
+        break;
+      case 'PLAYLISTS':
+        data = await searchForPlaylist(searchTerm, options);
+        break;
+      case 'MUSICS':
+        data = await searchForMusic(searchTerm, options);
+      default:
+        // Just a hack to avoid compatibility issues for now
+        if (isArtist) {
+          data = await searchForAlbum(searchTerm, options);
+        } else if (isPlaylist) {
+          data = await searchForPlaylist(searchTerm, options);
+        } else if (isMusic) {
+          data = await searchForMusic(searchTerm, options);
+        } else {
+          data = await searchForArtist(searchTerm, options);
+        }
+      };
   } catch (err) {
     context.res = { body: err, status: 500 };
     return;
@@ -49,3 +75,6 @@ module.exports = async function (context, req) {
 
   context.res = { body: data };
 };
+
+//module.exports = search;
+export { search };
