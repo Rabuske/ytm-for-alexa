@@ -11,7 +11,7 @@ async function mainTest(){
       method: 'GET',
       query: {
         query: "Pitty",
-        searchType: "ALBUMS",
+        searchType: "ARTISTS",
         fullResults: true
       },
   });

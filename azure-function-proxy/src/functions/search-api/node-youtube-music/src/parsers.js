@@ -585,43 +585,45 @@ const parseArtistsSuggestionsItem = (item) => {
 };
 
 const parseArtistData = (body, artistId) => {
+
+  
   let name;
   try {
     name = body.header.musicImmersiveHeaderRenderer.title.runs[0].text;
   } catch (e) {
     console.error("Couldn't get artist name", e);
   }
-
+  
   let description;
   try {
     description =
-      body.header.musicImmersiveHeaderRenderer.description.runs[0].text;
+    body.header.musicImmersiveHeaderRenderer.description.runs[0].text;
   } catch (e) {
     console.error("Couldn't get artist description", e);
   }
-
+  
   const thumbnails = [];
   try {
     const thumbnailArray =
-      body.header.musicImmersiveHeaderRenderer.thumbnail.musicThumbnailRenderer
-        .thumbnail.thumbnails;
+    body.header.musicImmersiveHeaderRenderer.thumbnail.musicThumbnailRenderer
+    .thumbnail.thumbnails;
     thumbnailArray.forEach((e) => {
       thumbnails.push(e);
     });
   } catch (e) {
     console.error("Couldn't get artist thumbnails", e);
   }
-
+  
   let songsPlaylistId;
   try {
     songsPlaylistId =
-      body.contents.singleColumnBrowseResultsRenderer.tabs[0].tabRenderer
-        .content.sectionListRenderer.contents[0].musicShelfRenderer.title
-        .runs[0].navigationEndpoint.browseEndpoint.browseId;
+    body.contents.singleColumnBrowseResultsRenderer.tabs[0].tabRenderer
+    .content.sectionListRenderer.contents[0].musicShelfRenderer.title
+    .runs[0].navigationEndpoint.browseEndpoint.browseId;
   } catch (e) {
     console.error("Couldn't get artist songPlaylistId", e);
   }
-
+  
   const albums = [];
   const singles = [];
   try {
@@ -670,6 +672,7 @@ const parseArtistData = (body, artistId) => {
     console.error("Couldn't get suggestedArtists", e);
   }
 
+
   let subscribers;
   try {
     subscribers =
@@ -678,7 +681,7 @@ const parseArtistData = (body, artistId) => {
   } catch (e) {
     console.error("Couldn't get subscribers", e);
   }
-  return {
+  return ({
     artistId,
     name,
     description,
@@ -688,7 +691,7 @@ const parseArtistData = (body, artistId) => {
     songsPlaylistId,
     suggestedArtists,
     subscribers,
-  };
+  });
 };
 
 const parseArtistSearchResult = (content) => {

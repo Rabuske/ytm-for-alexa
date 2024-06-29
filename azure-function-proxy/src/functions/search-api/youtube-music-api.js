@@ -35,7 +35,6 @@ const searchForArtist = async (query, options) => {
   }
   const artist = await getArtist(artists[0].artistId)
   const musics = await listMusicsFromPlaylist(artist.songsPlaylistId.slice(2))
-
   if(options?.fullResults)
   {
     return ({
@@ -43,10 +42,9 @@ const searchForArtist = async (query, options) => {
       musics: musics
     });
   }
-
   return ({
     title: artist.name,
-    videoIds: playlist.tracks.map(video => video.videoId)
+    videoIds: musics.map(video => video.youtubeId)
   })
 }
 

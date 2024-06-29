@@ -21,7 +21,8 @@ const LaunchRequestHandler = {
     );
   },
   handle(handlerInput) {
-    const speakOutput = welcomePhrases[Math.floor(Math.random() * welcomePhrases.length)];
+    const speakOutput =
+      welcomePhrases[Math.floor(Math.random() * welcomePhrases.length)];
 
     return handlerInput.responseBuilder
       .speak(speakOutput)
@@ -56,11 +57,10 @@ const CancelAndStopIntentHandler = {
   },
   handle(handlerInput) {
     const speakOutput = "Tchau babaca!";
-    return handlerInput
-        .responseBuilder
-        .speak(speakOutput)
-        .addAudioPlayerStopDirective()
-        .getResponse();
+    return handlerInput.responseBuilder
+      .speak(speakOutput)
+      .addAudioPlayerStopDirective()
+      .getResponse();
   },
 };
 
@@ -211,19 +211,17 @@ const PlayMusicIntentHandler = {
     return (
       Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
       (Alexa.getIntentName(handlerInput.requestEnvelope) === "TocarMusica" ||
-       Alexa.getIntentName(handlerInput.requestEnvelope) === "PlaySong"
-      )
+        Alexa.getIntentName(handlerInput.requestEnvelope) === "PlaySong")
     );
   },
   handle(handlerInput) {
     console.log("StartPlaybackHandler");
-    
+
     let randomMode = false;
-    if(handlerInput.requestEnvelope.request.intent.slots.randomMode.value)
-    {
-        randomMode = true;
+    if (handlerInput.requestEnvelope.request.intent.slots.randomMode.value) {
+      randomMode = true;
     }
-    
+
     const searchTerms = {
       artistName:
         handlerInput.requestEnvelope.request.intent.slots.artistName.value,
@@ -234,20 +232,26 @@ const PlayMusicIntentHandler = {
       albumName:
         handlerInput.requestEnvelope.request.intent.slots.albumName.value,
       playlistName:
-        handlerInput.requestEnvelope.request.intent.slots.playlistName.value,   
-      randomMode:
-        randomMode,
-    }
-    
-    searchTerms.query = `${searchTerms.playlistName || ""} ${searchTerms.musicName || ""} ${searchTerms.albumName || ""} ${searchTerms.groupName || ""} ${searchTerms.artistName || ""}`.trim();
+        handlerInput.requestEnvelope.request.intent.slots.playlistName.value,
+      randomMode: randomMode,
+    };
 
-    if (searchTerms.query.includes("jão") || searchTerms.query.includes("jao")) {
+    searchTerms.query = `${searchTerms.playlistName || ""} ${
+      searchTerms.musicName || ""
+    } ${searchTerms.albumName || ""} ${searchTerms.groupName || ""} ${
+      searchTerms.artistName || ""
+    }`.trim();
+
+    if (
+      searchTerms.query.includes("jão") ||
+      searchTerms.query.includes("jao")
+    ) {
       const speakOutput = "Aqui nessa casa não se ouve Jão. Peça uma outra.";
       return handlerInput.responseBuilder
         .speak(speakOutput)
         .reprompt(speakOutput)
         .getResponse();
-    }  
+    }
     return controller.search(handlerInput, searchTerms, null);
   },
 };
@@ -256,13 +260,15 @@ const MyRadioIntentHandler = {
   async canHandle(handlerInput) {
     return (
       Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
-      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyRadio"
-      )
+      Alexa.getIntentName(handlerInput.requestEnvelope) === "MyRadio"
     );
   },
   handle(handlerInput) {
-      console.log("MyRadioIntentHandler");
-      return controller.playPlaylist(handlerInput, "RDAMPLPLaEfP183lgZ1PcXSHu4bskUyM8fmLaw54");
+    console.log("MyRadioIntentHandler");
+    return controller.playPlaylist(
+      handlerInput,
+      "RDAMPLPLaEfP183lgZ1PcXSHu4bskUyM8fmLaw54"
+    );
   },
 };
 
@@ -270,13 +276,15 @@ const MyRadioRockIntentHandler = {
   async canHandle(handlerInput) {
     return (
       Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
-      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyRadioRock"
-      )
+      Alexa.getIntentName(handlerInput.requestEnvelope) === "MyRadioRock"
     );
   },
   handle(handlerInput) {
-      console.log("MyRadioRockIntentHandler");
-      return controller.playPlaylist(handlerInput, "RDAMPLPLaEfP183lgZ0sz4htGL1y6LkXNSw7T0ri");
+    console.log("MyRadioRockIntentHandler");
+    return controller.playPlaylist(
+      handlerInput,
+      "RDAMPLPLaEfP183lgZ0sz4htGL1y6LkXNSw7T0ri"
+    );
   },
 };
 
@@ -284,13 +292,15 @@ const MyPlaylistIntentHandler = {
   async canHandle(handlerInput) {
     return (
       Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
-      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyPlaylist"
-      )
+      Alexa.getIntentName(handlerInput.requestEnvelope) === "MyPlaylist"
     );
   },
   handle(handlerInput) {
-      console.log("MyPlaylistIntentHandler");
-      return controller.playPlaylist(handlerInput, "PLaEfP183lgZ1PcXSHu4bskUyM8fmLaw54");
+    console.log("MyPlaylistIntentHandler");
+    return controller.playPlaylist(
+      handlerInput,
+      "PLaEfP183lgZ1PcXSHu4bskUyM8fmLaw54"
+    );
   },
 };
 
@@ -298,13 +308,15 @@ const MyPlaylistRockIntentHandler = {
   async canHandle(handlerInput) {
     return (
       Alexa.getRequestType(handlerInput.requestEnvelope) === "IntentRequest" &&
-      (Alexa.getIntentName(handlerInput.requestEnvelope) === "MyPlaylistRock"
-      )
+      Alexa.getIntentName(handlerInput.requestEnvelope) === "MyPlaylistRock"
     );
   },
   handle(handlerInput) {
-      console.log("MyPlaylistRockIntentHandler");
-      return controller.playPlaylist(handlerInput, "PLaEfP183lgZ0sz4htGL1y6LkXNSw7T0ri");
+    console.log("MyPlaylistRockIntentHandler");
+    return controller.playPlaylist(
+      handlerInput,
+      "PLaEfP183lgZ0sz4htGL1y6LkXNSw7T0ri"
+    );
   },
 };
 
@@ -315,19 +327,16 @@ const controller = {
     const playbackInfo = await getPlaybackInfo(handlerInput);
     const data = await searchForVideos(searchTerms);
     playbackInfo.videoIds = data.videoIds;
-    if(searchTerms.randomMode)
-    {
-        shuffleArray(playbackInfo.videoIds, false);
-    }else if(searchTerms.musicName)
-    {
-        shuffleArray(playbackInfo.videoIds, true);
+    if (searchTerms.randomMode) {
+      shuffleArray(playbackInfo.videoIds, false);
+    } else if (searchTerms.musicName) {
+      shuffleArray(playbackInfo.videoIds, true);
     }
     playbackInfo.currentVideoIndex = 0;
     playbackInfo.offsetInMilliseconds = 0;
     return this.play(handlerInput, "Tocando ");
   },
-  async playPlaylist(handlerInput, playlistId)
-  {
+  async playPlaylist(handlerInput, playlistId) {
     console.log("playPlaylist");
     console.log(playlistId);
     const playbackInfo = await getPlaybackInfo(handlerInput);
@@ -344,10 +353,10 @@ const controller = {
     const { videoIds, offsetInMilliseconds, currentVideoIndex } = playbackInfo;
     const videoId = videoIds[currentVideoIndex];
     let audioFormat;
-    try{
-        audioFormat = await getAudioInformation(videoId);
-    } catch(err){
-        return controller.playNext(handlerInput);
+    try {
+      audioFormat = await getAudioInformation(videoId);
+    } catch (err) {
+      return controller.playNext(handlerInput);
     }
     handlerInput.responseBuilder
       .withShouldEndSession(true)
@@ -356,11 +365,9 @@ const controller = {
         audioFormat.url,
         videoId,
         offsetInMilliseconds
-    );
-    if (message) {
-      handlerInput.responseBuilder.speak(
-        `${message} ${audioFormat.title}`
       );
+    if (message) {
+      handlerInput.responseBuilder.speak(`${message} ${audioFormat.title}`);
     }
 
     // TODO: maybe add a card with the thumbnail of the video
@@ -406,41 +413,57 @@ const controller = {
   },
 };
 
-const searchForVideos = async (searchTerms) => {
-    const response = await axios({
-        method: 'get',
-        url: constants.config.videoSearchURL,
-        params: searchTerms
-      });
-    return response.data;
+const getSearchType = (searchTerms) => {
+  if (searchTerms.albumName) {
+    return "ALBUMS";
+  }
+  if (searchTerms.artistName || searchTerms.groupName) {
+    return "ARTISTS";
+  }
+  if (searchTerms.playlistName) {
+    return "PLAYLISTS";
+  }
+  return "MUSICS";
 };
 
+const searchForVideos = async (searchTerms) => {
+  const searchType = getSearchType(searchTerms);
+  const response = await axios({
+    method: "get",
+    url: constants.config.videoSearchURL,
+    params: {
+      query: searchTerms.query,
+      searchType: searchType,
+    },
+  });
+  return response.data;
+};
 const getPlaylist = async (playlistId) => {
-    const response = await axios({
-        method: 'get',
-        url: constants.config.videoSearchURL,
-        params: {
-            playlistId: playlistId,
-        },
-      });
-    return response.data;
+  const response = await axios({
+    method: "get",
+    url: constants.config.videoSearchURL,
+    params: {
+      playlistId: playlistId,
+    },
+  });
+  return response.data;
 };
 
 const getAudioInformation = async (videoId) => {
-    console.log("Getting VIDEO INFO")
-    try{
-        const response = await axios({
-            method: 'get',
-            url: constants.config.videoInfoURL,
-            params: {
-                videoId: videoId,
-            },
-          });
-        return response.data;
-    } catch(err){
-        console.log(JSON.stringify(err));
-        throw err;
-    }
+  console.log("Getting VIDEO INFO");
+  try {
+    const response = await axios({
+      method: "get",
+      url: constants.config.videoInfoURL,
+      params: {
+        videoId: videoId,
+      },
+    });
+    return response.data;
+  } catch (err) {
+    console.log(JSON.stringify(err));
+    throw err;
+  }
 };
 
 const getPlaybackInfo = async (handlerInput) => {
@@ -457,7 +480,10 @@ const fetchNextVideos = async (handlerInput) => {
   const playbackInfo = await getPlaybackInfo(handlerInput);
   // build playlist based on last played song
   const lastVideoId = playbackInfo.videoIds[playbackInfo.videoIds.length - 1];
-  const nextVideos = await searchForVideos({playlistName: lastVideoId, query: lastVideoId});
+  const nextVideos = await searchForVideos({
+    playlistName: lastVideoId,
+    query: lastVideoId,
+  });
   shuffleArray(nextVideos.videoIds);
   playbackInfo.videoIds = playbackInfo.videoIds.concat(nextVideos.videoIds);
   playbackInfo.videoIds = playbackInfo.videoIds.filter(onlyUnique);
@@ -490,8 +516,8 @@ const AudioPlayerEventHandler = {
         } else {
           playbackInfo.currentVideoIndex = playbackInfo.currentVideoIndex + 1;
         }
-        if(!playbackInfo.hasNextSongQueued){
-            controller.play(handlerInput);
+        if (!playbackInfo.hasNextSongQueued) {
+          controller.play(handlerInput);
         }
         break;
       case "PlaybackStopped":
@@ -500,8 +526,8 @@ const AudioPlayerEventHandler = {
           handlerInput.requestEnvelope.request.offsetInMilliseconds;
         break;
       case "PlaybackNearlyFinished":
-          await queueNextVideo(handlerInput);
-          break;
+        await queueNextVideo(handlerInput);
+        break;
       case "PlaybackFailed":
         console.log(
           "Playback Failed : %j",
@@ -520,46 +546,47 @@ const queueNextVideo = async (handlerInput) => {
   var canPlay = false;
   var retries = 0;
   const playbackInfo = await getPlaybackInfo(handlerInput);
-  while(!canPlay && retries < 10)
-  {
-      try{
-          if (
-            playbackInfo.currentVideoIndex ===
-            playbackInfo.videoIds.length - 1
-          ) {
-            //Reached the end of the playList, fetch nextPage
-            console.log("End of Playlist, search next");
-            await fetchNextVideos(handlerInput);
-            // Something went wrong, return to the start of playlist
-            if(playbackInfo.currentVideoIndex === playbackInfo.videoIds.length - 1){
-                playbackInfo.currentVideoIndex = 0;
-            }
-          }
-          let nextAudioId;
-          if (playbackInfo.isLoopingSongs) {
-            nextAudioId = playbackInfo.videoIds[playbackInfo.currentVideoIndex];
-          } else {
-            nextAudioId =
-              playbackInfo.videoIds[playbackInfo.currentVideoIndex + 1];
-          }
-          const audioFormat = await getAudioInformation(nextAudioId);
-          const expectedPreviousToken = playbackInfo.token;
-          const offsetInMilliseconds = 0;
-          handlerInput.responseBuilder.addAudioPlayerPlayDirective(
-            "ENQUEUE",
-            audioFormat.url,
-            nextAudioId,
-            offsetInMilliseconds,
-            expectedPreviousToken
-          );                  
-          canPlay = true;
-          playbackInfo.hasNextSongQueued = true;
-      } catch(err){
-          retries++;
-          playbackInfo.currentVideoIndex = playbackInfo.currentVideoIndex === playbackInfo.videoIds.length - 1? 0 : playbackInfo.currentVideoIndex + 1;
+  while (!canPlay && retries < 10) {
+    try {
+      if (playbackInfo.currentVideoIndex === playbackInfo.videoIds.length - 1) {
+        //Reached the end of the playList, fetch nextPage
+        console.log("End of Playlist, search next");
+        await fetchNextVideos(handlerInput);
+        // Something went wrong, return to the start of playlist
+        if (
+          playbackInfo.currentVideoIndex ===
+          playbackInfo.videoIds.length - 1
+        ) {
+          playbackInfo.currentVideoIndex = 0;
+        }
       }
+      let nextAudioId;
+      if (playbackInfo.isLoopingSongs) {
+        nextAudioId = playbackInfo.videoIds[playbackInfo.currentVideoIndex];
+      } else {
+        nextAudioId = playbackInfo.videoIds[playbackInfo.currentVideoIndex + 1];
+      }
+      const audioFormat = await getAudioInformation(nextAudioId);
+      const expectedPreviousToken = playbackInfo.token;
+      const offsetInMilliseconds = 0;
+      handlerInput.responseBuilder.addAudioPlayerPlayDirective(
+        "ENQUEUE",
+        audioFormat.url,
+        nextAudioId,
+        offsetInMilliseconds,
+        expectedPreviousToken
+      );
+      canPlay = true;
+      playbackInfo.hasNextSongQueued = true;
+    } catch (err) {
+      retries++;
+      playbackInfo.currentVideoIndex =
+        playbackInfo.currentVideoIndex === playbackInfo.videoIds.length - 1
+          ? 0
+          : playbackInfo.currentVideoIndex + 1;
+    }
   }
-}
+};
 
 const LoadPersistentAttributesRequestInterceptor = {
   async process(handlerInput) {
@@ -591,15 +618,15 @@ const SavePersistentAttributesResponseInterceptor = {
 
 /* Randomize array in-place using Durstenfeld shuffle algorithm */
 function shuffleArray(array, skipFirst) {
-    for (var i = array.length - 1; i > 0; i--) {
-        var j = Math.floor(Math.random() * (i + 1));
-        if(skipFirst && j === 0) {
-            continue;
-        }
-        var temp = array[i];
-        array[i] = array[j];
-        array[j] = temp;
+  for (var i = array.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    if (skipFirst && j === 0) {
+      continue;
     }
+    var temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
+  }
 }
 
 exports.handler = Alexa.SkillBuilders.custom()
