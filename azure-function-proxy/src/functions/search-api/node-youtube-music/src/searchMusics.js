@@ -1,0 +1,49 @@
+import fetch from "node-fetch";
+import * as parsers from "./parsers.js";
+import * as context from "./context.js";
+
+const parseSearchMusicsBody = (body) => {
+  const { contents } =
+    body.contents.tabbedSearchResultsRenderer.tabs[0].tabRenderer.content.sectionListRenderer.contents.pop()
+      .musicShelfRenderer;
+
+  const results = [];
+
+  contents.forEach((content) => {
+    try {
+      const song = parsers.parseMusicItem(content);
+      if (song) {
+        results.push(song);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  });
+  return results;
+};
+
+const searchMusics = async (query) => {
+  try {
+    const response = await fetch(
+      "https://music.youtube.com/youtubei/v1/search?alt=json&key=" +
+        process.env.YOUTUBE_API_KEY,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          ...context.body,
+          params: "EgWKAQIIAWoKEAoQCRADEAQQBQ%3D%3D",
+          query,
+        }),
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)",
+          origin: "https://music.youtube.com",
+        },
+      }
+    );
+    return parseSearchMusicsBody(await response.json());
+  } catch {
+    return [];
+  }
+};
+export { searchMusics };

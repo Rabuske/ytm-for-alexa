@@ -7,8 +7,10 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@steffenkabus/node-youtube-music": "^0.11.2",
+    "@azure/functions": "^4.5.0",
+    "node-fetch": "^2.7.0",
     "ytdl-core": "^4.11.2"
   },
+  "main": "src/functions/*.js",
   "type": "module"
 }
