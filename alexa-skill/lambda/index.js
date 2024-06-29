@@ -410,10 +410,7 @@ const searchForVideos = async (searchTerms) => {
     const response = await axios({
         method: 'get',
         url: constants.config.videoSearchURL,
-        params: {
-            query: searchTerms.query,
-        },
-        data: searchTerms,
+        params: searchTerms
       });
     return response.data;
 };
