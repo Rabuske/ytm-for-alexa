@@ -1,6 +1,6 @@
 import pkg from '@azure/functions';
 const { app, HttpResponse } = pkg;
-import ytdl from "ytdl-core"; 
+import ytdl from "@distube/ytdl-core"; 
 
 async function ytmusic(request) {    
     const videoId = request.query.get('videoId');

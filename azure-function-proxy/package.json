@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@azure/functions": "^4.5.0",
-    "node-fetch": "^2.7.0",
-    "ytdl-core": "^4.11.2"
+    "@distube/ytdl-core": "^4.15.1",
+    "node-fetch": "^2.7.0"
   },
   "main": "src/functions/*.js",
   "type": "module"

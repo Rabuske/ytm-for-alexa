@@ -10,8 +10,8 @@ async function mainTest(){
       url: 'http://localhost/search-api',
       method: 'GET',
       query: {
-        query: "Pitty",
-        searchType: "ARTISTS",
+        query: "Chihiro billy eilish",
+        searchType: "MUSICS",
         fullResults: true
       },
   });

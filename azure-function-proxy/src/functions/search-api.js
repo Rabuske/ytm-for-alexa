@@ -19,7 +19,7 @@ async function search(request) {
     });    
   }
 
-  const fullResults = request.query.get('ALBUMS');
+  const fullResults = request.query.get('fullResults');
   const options = { fullResults: fullResults || false };
 
   // Start by playing an specific playlist
@@ -51,7 +51,7 @@ async function search(request) {
         data = await searchForMusic(searchTerm, options);
       };
   } catch (err) {
-    return ({ jsonBody: err, status: 500 });
+    return ({ jsonBody: err, status: 500});
   }
   return ({ jsonBody: data });
 };
