@@ -414,6 +414,9 @@ const controller = {
 };
 
 const getSearchType = (searchTerms) => {
+  if (searchTerms.musicName) {
+    return "MUSICS";
+  }
   if (searchTerms.albumName) {
     return "ALBUMS";
   }

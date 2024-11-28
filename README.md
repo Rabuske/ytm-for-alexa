@@ -46,3 +46,7 @@ The initial skill was build based on [this article](https://betterprogramming.pu
                                             ▼
 
 ```
+
+## Testing the functions
+
+Install Azure Functions CLI and run using `func start`, the functions will run into an endpoint. Manual testing can be done using an HTTP client, or modifying the test files (which are not automated tests ATM). 
